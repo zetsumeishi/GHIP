@@ -1,0 +1,106 @@
+if params.len != 1 then exit("arg missing")
+
+Core = {}
+core = new Core
+core.SHELL = get_shell()
+core.COMPUTER = core.SHELL.host_computer()
+core.METAXPLOIT = include_lib("/lib/metaxploit.so")
+
+EXPLOITS = ""
+
+get_between = function(string, c, d)
+	a = string.indexOf(c)+len(c)
+	b = string.indexOf(d)
+	return string[a:b]
+end function
+
+curr_content = ""
+
+analyze_port = function(port, conn, port_info) //port: number, conn: NetSession
+	lib = conn.dump_lib
+	zones = globals.core.METAXPLOIT.scan(lib)
+	for zone in zones
+		vol_string = globals.core.METAXPLOIT.scan_address(lib, zone)
+		i = vol_string.indexOf("Unsafe check:")
+		while i != null
+			vol_string = vol_string[i+13:]
+			unsec_value = get_between(vol_string, "<b>", "</b>")
+			i = vol_string.indexOf("Unsafe check:")
+			part = vol_string[:i]
+			j = part.indexOf("*")
+			reqs = ""
+			while j != null
+				part = part[j+1:]
+				j = part.indexOf("*")
+				req = part
+				if j != null then
+					req = part[:j]
+				end if
+				if req.indexOf("active user") != null then
+					if req.indexOf("root") != null then
+						reqs = reqs + "root_active|"
+					else
+						reqs = reqs + "users_active|"
+					end if
+				else if req.indexOf("registered users") != null then
+					reqs = reqs + "reg_users:" + get_between(req, "to ", ".") + "|"
+				else if req.indexOf("Using namespace") != null then
+					a = get_between(req, "<b>", "</b>")
+					b = get_between(req[req.indexOf("version"):], "<b>", "</b>")
+					reqs = reqs + "namespace:" + a + ":" + b +"|"
+				else if req.indexOf("port forwarding") != null then
+					reqs = reqs + "ports_forwarded:" + get_between(req, " ", " port") + "|"
+				else if req.indexOf("existing connection") != null then
+					reqs = reqs + "lan" + "|"
+				else
+					print("<color=#ff0000><b>Requirement can't be parsed: </b></color>" + req)
+				end if
+			end while
+			globals.EXPLOITS = port_info[0] + " " + port_info[1] + " " + port + " " + zone + " " + unsec_value + " " + reqs[:-1]
+		end while
+	end for
+end function
+
+open_db = function()
+	db_path = "/root/myprogram.txt"
+	globals.core.db_file = globals.core.COMPUTER.File(db_path)
+end function
+
+random_ip = function()
+	ip = []
+	for i in range(0, 3)
+		ip.push(str(floor((rnd * 255) + 1)))
+	end for
+	return ip.join(".")
+end function
+
+main = function()
+	i = 1
+	nb_ips = params[0].val
+	open_db()
+	globals.curr_content = globals.core.db_file.content
+	while i <= nb_ips
+		router = null
+		while router == null
+			ip = random_ip()
+			router = get_router(ip)
+		end while
+		print("[" + str(i) + "]")
+		ports = router.used_ports()
+		for port in ports
+			globals.EXPLOITS = ""
+			net_session = globals.core.METAXPLOIT.net_use(ip, port.port_number)
+			port_info = router.port_info(port).split(" ")
+			analyze_port(port.port_number, net_session, port_info)
+			for line in globals.EXPLOITS.split("\n")
+				if globals.curr_content.indexOf(line) == null then
+					globals.curr_content = globals.curr_content + "\n" + line
+				end if
+			end for
+			globals.core.db_file.set_content(globals.curr_content)
+		end for
+		i = i + 1
+	end while
+end function
+
+main()

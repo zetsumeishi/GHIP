@@ -1,0 +1,60 @@
+// You need to specify the path of your source files and the file where you import your modules.
+// It imports the files at the top and in the order they are declared in the main source file.
+// To import, add at the top of the file: #import filename
+// Don't do this #import filename.src
+// This is a scripting language, so before coding, think about your code, dependencies, order.
+// The name of the files will be 'tmp' and 'tmp.src'
+// zetsumeishi
+
+shell = get_shell()
+computer = shell.host_computer()
+help = "<b>[USAGE]</b> compile /path/to/folder/ main.src\n  --debug: Keeps the compiled source file."
+tmp_name = "tmp.src"
+debug = false
+
+if params.len < 2 or params[0] == "-h" or params[0] == "--help" then
+	exit(help)
+else if params.indexOf("--debug") then
+	debug = true
+	params.remove(params.indexOf("--debug"))
+end if
+
+folder_path = params[0]
+
+if folder_path[-1] != "/" then
+	folder_path = folder_path + "/"
+end if
+
+params.pull()
+
+folder = shell.host_computer.File(folder_path)
+files = [shell.host_computer.File(folder_path + params[0])] + folder.get_files
+
+file_to = computer.File(folder_path + params[0])
+computer.touch(folder_path, tmp_name)
+tmp_file = computer.File(folder_path + tmp_name)
+
+modules = []
+file_to_content = file_to.content.split("\n")
+nb_imports = 0
+for line in file_to_content
+	if line and line[0] == "#" then
+		modules.push(line.split(" ")[1] + ".src")
+		nb_imports = nb_imports + 1
+	end if
+end for
+
+for i in range(0, nb_imports - 1)
+	file_to_content.pull()
+end for
+
+tmp_content = []
+for module in modules
+	file_from = computer.File(folder_path + module)
+	tmp_content.push(file_from.content)
+end for
+
+tmp_content.push(file_to_content.join("\n"))
+tmp_file.set_content(tmp_content.join("\n"))
+shell.build(folder_path + tmp_name, folder_path)
+if debug == false then tmp_file.delete()
