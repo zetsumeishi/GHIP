@@ -33,7 +33,7 @@ end function
 
 Pprint.banner = function(lst, bold)
 	i = 0
-	keys = globals.GRADIENT.indexes()
+	keys = GRADIENT.indexes()
 	if not bold then bold = false
 
 	for str in lst
