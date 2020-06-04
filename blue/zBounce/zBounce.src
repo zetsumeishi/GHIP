@@ -87,9 +87,12 @@ end function
 
 clear_logs = function(targets)
 	for target in targets
-		tmp_shell = get_shell.connect_service(target.ip, 22, target.user, target.password)
-		tmp_shell.launch("/bin/rm", "/var/system.log")
-		print("<color=green>Logs cleared on " + target.ip + "</color>")
+		target_shell = get_shell.connect_service(target.ip, 22, target.user, target.password)
+		target_computer = target_shell.host_computer
+		log_file = target_computer.File("/var/system.log")
+		target_computer.create_user("g", "b")
+		log_file.move("/home/g", "system.log")
+		target_computer.delete_user("g", 1)
 	end for
 end function
 
@@ -119,6 +122,7 @@ main = function()
 		else if action == 3 then
 			clear_logs(targets)
 		end if
+		clear_logs(targets)
 	end while
 end function
 
