@@ -57,8 +57,8 @@ download = function(targets)
 	dest_path = user_input("destination (host)>")
 	print("Download: <color=green><b>" + src_path + "</b></color> to <color=green><b>" + dest_path + "</b></color>")
 	for target in targets
-		tmp_shell = get_shell.connect_service(target.ip, 22, target.user, target.password)
-		tmp_shell.scp_upload(src_path, dest_path, globals.User.shell)
+		target_shell = get_shell.connect_service(target.ip, 22, target.user, target.password)
+		target_shell.scp_upload(src_path, dest_path, globals.User.shell)
 		print("<color=green>File downloaded from " + target.ip + "</color>")
 	end for
 end function
@@ -68,16 +68,16 @@ upload = function(targets)
 	dest_path = user_input("destination (remote)>")
 	print("Upload: <color=green><b>" + src_path + "</b></color> to <color=green><b>" + dest_path + "</b></color>")
 	for target in targets
-		tmp_shell = get_shell.connect_service(target.ip, 22, target.user, target.password)
-		User.shell.scp_upload(src_path, dest_path, tmp_shell)
+		target_shell = get_shell.connect_service(target.ip, 22, target.user, target.password)
+		User.shell.scp_upload(src_path, dest_path, target_shell)
 		print("<color=green>File uploaded to " + target.ip + "</color>")
 	end for
 end function
 
 root_permissions = function(targets)
 	for target in targets
-		tmp_shell = get_shell.connect_service(target.ip, 22, target.user, target.password)
-		parent = tmp_shell.host_computer.File("/")
+		target_shell = get_shell.connect_service(target.ip, 22, target.user, target.password)
+		parent = target_shell.host_computer.File("/")
 		parent.chmod("o-wrx", 1)
 		parent.chmod("g-wrx", 1)
 		parent.chmod("u-wrx", 1)
