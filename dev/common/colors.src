@@ -1,0 +1,47 @@
+// -- Pprint --
+// -- v0.1 --
+
+// Class Pprint
+Pprint = {}
+
+// Default colors
+COLOR = {}
+COLOR["red"] = "#f94144"
+COLOR["yellow"] = "#f9c74f"
+COLOR["orange"] = "#f8961e"
+COLOR["blue"] = "#118ab2"
+COLOR["green"] = "#90be6d"
+COLOR["black"] = "#000000"
+COLOR["white"] = "#ffffff"
+
+// Gradient used in the suite
+GRADIENT = {}
+GRADIENT["baby_blue"] = "#6ecdfa"
+GRADIENT["maya_blue"] = "#53c0ff"
+GRADIENT["blue_jeans"] = "#57b0ff"
+GRADIENT["cornflower"] = "#7b9bff"
+GRADIENT["lavender"] = "#a87fff"
+GRADIENT["heliothrope"] = "#d456f2"
+
+Pprint.color = function(str, color, bold)
+	if bold then
+		print("<color=" + COLOR[color] + "><b>" + str + "</b></color>")
+	else
+		print("<color=" + COLOR[color] + ">" + str + "</color>")
+	end if
+end function
+
+Pprint.banner = function(lst, bold)
+	i = 0
+	keys = globals.GRADIENT.indexes()
+	if not bold then bold = false
+
+	for str in lst
+		if bold then
+			print("<color=" + GRADIENT[keys[i]] + "><b>" + str + "</b></color>")
+		else
+			print("<color=" + GRADIENT[keys[i]] + ">" + str + "</color>")
+		end if
+		i = i + 1
+	end for
+end function
