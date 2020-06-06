@@ -1,0 +1,10 @@
+Display.banner = function()
+	i = 0
+	keys = GRADIENT.indexes()
+	banner_content = COMPUTER.File("/home/zetsumeishi/voyager/banner.txt").content.split(EOL)
+	for line in banner_content[:7]
+		print("<color=" + GRADIENT[keys[i]] + "><b>" + line + "</b></color>")
+		i = i + 1
+		// wait(0.1) Uncomment this when nightly goes public. Not working on this current version.
+	end for
+end function

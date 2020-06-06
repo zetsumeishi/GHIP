@@ -1,0 +1,75 @@
+// Init
+// This is the file where we declare ours classes for reference.
+// Also helps having a documented file about the objects we used across the suite.
+
+// Target Class
+// Variables: ports (list of Port), ip, url, router, whois
+Target = {}
+
+// Port Class
+// Variables: service, number, version, state, local_ip
+Port = {}
+Port.number = 0
+Port.local_ip = ""
+Port.vector = "" // Vector is the medium by which the exploit works (http, ssh, router, etc...)
+Port.version = ""
+Port.state = "" // OPEN or CLOSED
+
+// Core Class
+// Methods:
+Core = {}
+
+// Pprint Class
+// Methods: color()
+
+// Display Class
+// Methods: banner()
+Display = {}
+
+
+// Constants
+// File containing global variables that ca be used across all tools
+// If you want to put a carriage return in a print or string for example, use EOL because when writing
+// the file that is going to be compiled, it's going to put a carriage return in the middle of the code.
+
+EOL = char(10)
+SPACE = char(32)
+PROMPT = ["vo", "ya", "ge", "r", ">" + SPACE]
+OPEN = "OPEN"
+CLOSED = "CLOSED"
+
+// Gradient used in the suite
+GRADIENT = {}
+GRADIENT["baby_blue"] = "#6ecdfa"
+GRADIENT["capri"] = "#56c3ff"
+GRADIENT["blue_jeans"] = "#51b6ff"
+GRADIENT["little_boy"] = "#67a6ff"
+GRADIENT["cornflower"] = "#8a92ff"
+GRADIENT["lavender"] = "#b079ff"
+GRADIENT["heliothrope"] = "#d456f2"
+
+// User informations
+SHELL = get_shell
+COMPUTER = SHELL.host_computer
+
+
+Display.banner = function()
+	i = 0
+	keys = GRADIENT.indexes()
+	banner_content = COMPUTER.File("/home/zetsumeishi/voyager/banner.txt").content.split(EOL)
+	for line in banner_content[:7]
+		print("<color=" + GRADIENT[keys[i]] + "><b>" + line + "</b></color>")
+		i = i + 1
+		// wait(0.1) Uncomment this when nightly goes public. Not working on this current version.
+	end for
+end function
+
+
+
+
+main = function()
+	display = new Display
+	display.banner()
+end function
+
+main()

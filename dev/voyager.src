@@ -1,0 +1,11 @@
+#import init
+#import constants
+#import display
+
+
+main = function()
+	display = new Display
+	display.banner()
+end function
+
+main()
