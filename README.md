@@ -20,7 +20,7 @@ Server management tool. Run commands on your proxy servers.
 
 ## Red Tools
 
-#### zDB
+#### athena
 
 Scans the whole network for all existing exploits to compile them into a readable database.
 
