@@ -9,6 +9,11 @@ PROMPT = ["vo", "ya", "ge", "r", ">" + SPACE]
 OPEN = "OPEN"
 CLOSED = "CLOSED"
 
+// User informations
+SHELL = get_shell
+COMPUTER = SHELL.host_computer
+CRYPTO = include_lib("/lib/crypto.so")
+
 // Gradient used in the suite
 GRADIENT = {}
 GRADIENT["baby_blue"] = "#6ecdfa"
@@ -18,7 +23,3 @@ GRADIENT["little_boy"] = "#67a6ff"
 GRADIENT["cornflower"] = "#8a92ff"
 GRADIENT["lavender"] = "#b079ff"
 GRADIENT["heliothrope"] = "#d456f2"
-
-// User informations
-SHELL = get_shell
-COMPUTER = SHELL.host_computer

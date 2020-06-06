@@ -1,0 +1,50 @@
+SHELL = get_shell
+COMPUTER = SHELL.host_computer
+CRYPTO = include_lib("/lib/crypto.so")
+EOL = char(10)
+SPACE = char(32)
+
+// CODE TO IMPLEMENT
+get_net_card = function()
+	if COMPUTER.active_net_card == "WIFI" then
+		return "wlan0"
+	else
+		return "eth0"
+end function
+
+get_wifi_networks = function()
+	data = []
+	net_card = get_net_card()
+	CRYPTO.airmon("start", net_card)
+	networks = COMPUTER.wifi_networks(net_card)
+
+	for network in networks
+		network_info = network.split(" ")
+		data.push({"BSSID": network_info[0], "POWER": network_info[1][:-1], "ESSID": network_info[2]})
+	end for
+
+	data = data.sort("POWER")
+	data.reverse()
+	return data
+end function
+
+crack_wifi = function()
+	data = get_wifi_networks()
+	report_content = "BSSDI ESSID POWER PASSWORD"
+	for network in data
+		acks_required = ceil(3000 * (100/network["POWER"].val))
+		CRYPTO.aireplay(network["BSSID"], network["ESSID"], acks_required)
+		password = CRYPTO.aircrack(COMPUTER.current_path + "/file.cap")
+		report_content = report_content + EOL + network["BSSID"] + SPACE + network["ESSID"] + SPACE + network["POWER"] + SPACE + password
+	end for
+	home_dir_path = home_dir
+	report_file = COMPUTER.File(home_dir_path + "/wifi.txt")
+	if not report_file then
+		COMPUTER.touch(home_dir_path, "wifi.txt")
+	end if
+	report_file = COMPUTER.File(home_dir_path + "/wifi.txt")
+	report_file.set_content(report_content)
+end function
+
+crack_wifi()
+	
