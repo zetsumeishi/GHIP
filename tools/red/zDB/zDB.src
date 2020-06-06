@@ -1,26 +1,23 @@
-if params.len != 1 then exit("arg missing")
+EOL = char(10)
 
-Core = {}
-core = new Core
-core.SHELL = get_shell()
-core.COMPUTER = core.SHELL.host_computer()
-core.METAXPLOIT = include_lib("/lib/metaxploit.so")
-
+SHELL = get_shell()
+COMPUTER = SHELL.host_computer()
+METAXPLOIT = include_lib("/lib/metaxploit.so")
+DB_FILE = COMPUTER.File("/root/exploits.txt")
+LAST_IP_FILE = COMPUTER.File("/root/last_ip.txt")
 EXPLOITS = ""
 
 get_between = function(string, c, d)
-	a = string.indexOf(c)+len(c)
+	a = string.indexOf(c) + len(c)
 	b = string.indexOf(d)
 	return string[a:b]
 end function
 
-curr_content = ""
-
-analyze_port = function(port, conn, port_info) //port: number, conn: NetSession
+analyze_port = function(port, conn, port_info)
 	lib = conn.dump_lib
-	zones = globals.core.METAXPLOIT.scan(lib)
+	zones = METAXPLOIT.scan(lib)
 	for zone in zones
-		vol_string = globals.core.METAXPLOIT.scan_address(lib, zone)
+		vol_string = METAXPLOIT.scan_address(lib, zone)
 		i = vol_string.indexOf("Unsafe check:")
 		while i != null
 			vol_string = vol_string[i+13:]
@@ -61,46 +58,37 @@ analyze_port = function(port, conn, port_info) //port: number, conn: NetSession
 	end for
 end function
 
-open_db = function()
-	db_path = "/root/myprogram.txt"
-	globals.core.db_file = globals.core.COMPUTER.File(db_path)
-end function
-
-random_ip = function()
-	ip = []
-	for i in range(0, 3)
-		ip.push(str(floor((rnd * 255) + 1)))
-	end for
-	return ip.join(".")
-end function
-
 main = function()
-	i = 1
-	nb_ips = params[0].val
-	open_db()
-	globals.curr_content = globals.core.db_file.content
-	while i <= nb_ips
-		router = null
-		while router == null
-			ip = random_ip()
-			router = get_router(ip)
-		end while
-		print("[" + str(i) + "]")
-		ports = router.used_ports()
-		for port in ports
-			globals.EXPLOITS = ""
-			net_session = globals.core.METAXPLOIT.net_use(ip, port.port_number)
-			port_info = router.port_info(port).split(" ")
-			analyze_port(port.port_number, net_session, port_info)
-			for line in globals.EXPLOITS.split("\n")
-				if globals.curr_content.indexOf(line) == null then
-					globals.curr_content = globals.curr_content + "\n" + line
-				end if
+	db_content = DB_FILE.content
+	last_ip = LAST_IP_FILE.content.split(".")
+
+	for octet1 in range(last_ip[0].val, 255)
+		for octet2 in range(last_ip[1].val, 255)
+			for octet3 in range(last_ip[2].val, 255)
+				for octet4 in range(last_ip[3].val, 255)
+					router = null
+					target_ip = str(octet1) + "." + str(octet2) + "." + str(octet3) + "." + str(octet4)
+					router = get_router(target_ip)
+					if not router then continue
+					ports = router.used_ports()
+					for port in ports
+						globals.EXPLOITS = ""
+						net_session = METAXPLOIT.net_use(target_ip, port.port_number)
+						if not net_session then continue
+						port_info = router.port_info(port).split(" ")
+						analyze_port(port.port_number, net_session, port_info)
+						for line in globals.EXPLOITS.split("\n")
+							if db_content.indexOf(line) == null then
+								db_content = db_content + "\n" + line
+							end if
+						end for
+						DB_FILE.set_content(db_content)
+					end for
+					LAST_IP_FILE.set_content(target_ip)
+				end for
 			end for
-			globals.core.db_file.set_content(globals.curr_content)
 		end for
-		i = i + 1
-	end while
+	end for
 end function
 
 main()
