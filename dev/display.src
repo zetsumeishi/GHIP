@@ -8,3 +8,11 @@ Display.banner = function()
 		// wait(0.1) Uncomment this when nightly goes public. Not working on this current version.
 	end for
 end function
+
+Display.print_color = function(str, color, bold)
+	if bold then
+		print("<color=" + COLOR[color] + "><b>" + str + "</b></color>")
+	else
+		print("<color=" + COLOR[color] + ">" + str + "</color>")
+	end if
+end function
