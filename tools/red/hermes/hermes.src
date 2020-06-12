@@ -1,3 +1,5 @@
+// Currently in nightly. hermes automatically hacks all WiFi and compile a report.
+
 SHELL = get_shell
 COMPUTER = SHELL.host_computer
 CRYPTO = include_lib("/lib/crypto.so")
@@ -47,4 +49,3 @@ crack_wifi = function()
 end function
 
 crack_wifi()
-	

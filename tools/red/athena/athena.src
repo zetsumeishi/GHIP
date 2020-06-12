@@ -1,3 +1,5 @@
+// Scans the whole internet for all existing exploits to compile them into a readable database.
+
 EOL = char(10)
 
 SHELL = get_shell()

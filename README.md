@@ -22,9 +22,9 @@ Server management tool. Run commands on your proxy servers.
 
 #### athena
 
-Scans the whole network for all existing exploits to compile them into a readable database.
+Scans the whole internet for all existing exploits to compile them into a readable database.
 
-#### zWiFi
+#### hermes
 
 Currently in nightly. Automatically hacks all WiFi and compile a report.
 
