@@ -1,0 +1,4 @@
+is_not_number = function(str)
+  if typeof(str.to_int()) != "number" then return true
+  return false
+end function
