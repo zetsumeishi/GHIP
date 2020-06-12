@@ -15,17 +15,33 @@ Port.vector = "" // Vector is the medium by which the exploit works (http, ssh, 
 Port.version = ""
 Port.state = "" // OPEN or CLOSED
 
-// Core Class
-// Methods:
-Core = {}
-
-// Pprint Class
-// Methods: color()
 
 // Display Class
-// Methods: banner()
+// Methods: banner(), print_color(string, color string, boolean bold)
 Display = {}
 
+// hades
+
+// Proxy Class
+Proxy = {}
+Proxy.user = ""
+Proxy.ip = ""
+Proxy.password = ""
+
+// User Class
+User = {}
+User.shell = "" // Shell object
+User.name = "" // Name of the user executing the script
+User.proxies = [] // List of proxies extracted from Map.conf
+User.computer = "" // Computer object
+
+USER = new User
+
+init_user = function()
+	USER.shell = get_shell
+	USER.name = active_user
+	USER.computer = USER.shell.host_computer
+end function
 
 // Constants
 // File containing global variables that ca be used across all tools
@@ -38,6 +54,16 @@ PROMPT = ["vo", "ya", "ge", "r", ">" + SPACE]
 OPEN = "OPEN"
 CLOSED = "CLOSED"
 
+COLOR = {}
+COLOR["red"] = "#f94144"
+COLOR["yellow"] = "#f9c74f"
+COLOR["orange"] = "#f8961e"
+COLOR["blue"] = "#118ab2"
+COLOR["green"] = "#90be6d"
+COLOR["black"] = "#000000"
+COLOR["white"] = "#ffffff"
+COLOR["lavender"] = "#a87fff"
+
 // Gradient used in the suite
 GRADIENT = {}
 GRADIENT["baby_blue"] = "#6ecdfa"
@@ -48,15 +74,18 @@ GRADIENT["cornflower"] = "#8a92ff"
 GRADIENT["lavender"] = "#b079ff"
 GRADIENT["heliothrope"] = "#d456f2"
 
-// User informations
-SHELL = get_shell
-COMPUTER = SHELL.host_computer
+BLUE_MENU = ["hades"]
+HADES_MAIN_MENU = ["Upload file", "Download file", "Root permissions", "Clear logs"]
 
+is_not_number = function(str)
+  if typeof(str.to_int()) != "number" then return true
+  return false
+end function
 
 Display.banner = function()
 	i = 0
 	keys = GRADIENT.indexes()
-	banner_content = COMPUTER.File("/home/zetsumeishi/voyager/banner.txt").content.split(EOL)
+	banner_content = USER.computer.File("/home/" + USER.name + "/voyager/banner.txt").content.split(EOL)
 	for line in banner_content[:7]
 		print("<color=" + GRADIENT[keys[i]] + "><b>" + line + "</b></color>")
 		i = i + 1
@@ -64,12 +93,165 @@ Display.banner = function()
 	end for
 end function
 
+Display.print_color = function(str, color, bold)
+	if bold then
+		return "<color=" + COLOR[color] + "><b>" + str + "</b></color>"
+	else
+		return "<color=" + COLOR[color] + ">" + str + "</color>"
+	end if
+end function
 
+teams_menu = function(display)
+	print(display.print_color("1. Blue", "blue", true))
+	print(display.print_color("2. Purple", "lavender", true))
+	print(display.print_color("3. Red", "red", true))
+	option = user_input(display.print_color("voyager>", "lavender", true))
+	if is_not_number(option) then return 0
+  if option.to_int() > 3 then return 0
+	return option.to_int()
+end function
+
+blue_menu = function(display)
+  option_number = 1
+  for option in BLUE_MENU
+    print(display.print_color(str(option_number) + ". " + BLUE_MENU[option_number - 1], "blue", true))
+    option_number = option_number + 1
+  end for
+  option = user_input(display.print_color("blue>", "blue", true))
+  if is_not_number(option) then return 0
+  if option.to_int() > len(BLUE_MENU) then return 0
+  return option.to_int()
+end function
+
+// hades
+
+main_menu = function()
+	for i in range(0, HADES_MAIN_MENU.len - 1)
+		print("[" + i + "] " + HADES_MAIN_MENU[i])
+	end for
+	print("[99] Exit")
+	opt = user_input(">").val
+	return opt
+end function
+
+proxies_menu = function(ignore)
+	for i in range(0, USER.proxies.len - 1)
+		print("[" + i + "] " + USER.proxies[i].ip)
+	end for
+	if not ignore then
+		print("[" + USER.proxies.len + "] " + "ALL")
+	end if
+	opt = user_input(">").val
+	return opt
+end function
+
+parse_map = function()
+	map_file = USER.computer.File("/home/" + USER.name + "/Config/Map.conf")
+	map_content = map_file.content.replace("""", "").replace("{", "").replace("}", "").replace("[", "").replace("]", "").remove("accounts:").split(",")[:-1]
+	for i in range(0, map_content.len - 1, 3)
+		proxy = new Proxy
+		proxy_info = slice(map_content, i, i + 3)
+		proxy.user = proxy_info[0].split(":")[1]
+		proxy.ip = proxy_info[1].split(":")[1]
+		proxy.password = proxy_info[2].split(":")[1]
+		USER.proxies.push(proxy)
+	end for
+end function
+
+download = function(targets)
+	src_path = user_input("source (remote)>")
+	dest_path = user_input("destination (host)>")
+	print("Download: <color=green><b>" + src_path + "</b></color> to <color=green><b>" + dest_path + "</b></color>")
+	for target in targets
+		target_shell = get_shell.connect_service(target.ip, 22, target.user, target.password)
+		target_shell.scp_upload(src_path, dest_path, USER.shell)
+		print("<color=green>File downloaded from " + target.ip + "</color>")
+	end for
+end function
+
+upload = function(targets)
+	src_path = user_input("source (host)>")
+	dest_path = user_input("destination (remote)>")
+	print("Upload: <color=green><b>" + src_path + "</b></color> to <color=green><b>" + dest_path + "</b></color>")
+	for target in targets
+		target_shell = get_shell.connect_service(target.ip, 22, target.user, target.password)
+		USER.shell.scp_upload(src_path, dest_path, target_shell)
+		print("<color=green>File uploaded to " + target.ip + "</color>")
+	end for
+end function
+
+root_permissions = function(targets)
+	for target in targets
+		target_shell = get_shell.connect_service(target.ip, 22, target.user, target.password)
+		parent = target_shell.host_computer.File("/")
+		parent.chmod("o-wrx", 1)
+		parent.chmod("g-wrx", 1)
+		parent.chmod("u-wrx", 1)
+		print("<color=green>Permissions changed on " + target.ip + "</color>")
+	end for
+end function
+
+clear_logs = function(targets)
+	for target in targets
+		target_shell = get_shell.connect_service(target.ip, 22, target.user, target.password)
+		target_computer = target_shell.host_computer
+		log_file = target_computer.File("/var/system.log")
+		target_computer.create_user("g", "b")
+		log_file.move("/home/g", "system.log")
+		target_computer.delete_user("g", 1)
+	end for
+end function
+
+hades = function()
+	parse_map()
+	while true
+		action = main_menu()
+		if action == 99 then exit()
+		if action == 1 then
+			proxy_index = proxies_menu(true)
+		else
+			proxy_index = proxies_menu(false)
+		end if
+		if proxy_index == USER.proxies.len then
+			targets = USER.proxies
+		else
+			targets = [USER.proxies[proxy_index]]
+		end if
+
+		if action == 0 then
+			upload(targets)
+		else if action == 1 then
+			download(targets)
+		else if action == 2 then
+			root_permissions(targets)
+		else if action == 3 then
+			clear_logs(targets)
+		end if
+		clear_logs(targets)
+	end while
+end function
 
 
 main = function()
+	init_user()
 	display = new Display
 	display.banner()
+
+	option = 0
+	while option == 0
+		option = teams_menu(display)
+		if option == 1 then
+			option = blue_menu(display)
+			if option != 1 then continue
+			hades()
+		else if option == 2 then
+			print("Nothing here yet.")
+		else if option == 3 then
+			print("Nothing here yet.")
+		else
+			print("Enter a valid option number.")
+		end if
+	end while
 end function
 
 main()
