@@ -1,11 +1,30 @@
 #import init
 #import constants
+#import helpers
 #import display
-
+#import menu
+#import hades
 
 main = function()
+	init_user()
 	display = new Display
 	display.banner()
+
+	option = 0
+	while option == 0
+		option = teams_menu(display)
+		if option == 1 then
+			option = blue_menu(display)
+			if option != 1 then continue
+			hades()
+		else if option == 2 then
+			print("Nothing here yet.")
+		else if option == 3 then
+			print("Nothing here yet.")
+		else
+			print("Enter a valid option number.")
+		end if
+	end while
 end function
 
 main()

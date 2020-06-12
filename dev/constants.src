@@ -29,6 +29,5 @@ GRADIENT["cornflower"] = "#8a92ff"
 GRADIENT["lavender"] = "#b079ff"
 GRADIENT["heliothrope"] = "#d456f2"
 
-// User information
-SHELL = get_shell
-COMPUTER = SHELL.host_computer
+BLUE_MENU = ["hades"]
+HADES_MAIN_MENU = ["Upload file", "Download file", "Root permissions", "Clear logs"]

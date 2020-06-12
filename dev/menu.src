@@ -1,0 +1,21 @@
+teams_menu = function(display)
+	print(display.print_color("1. Blue", "blue", true))
+	print(display.print_color("2. Purple", "lavender", true))
+	print(display.print_color("3. Red", "red", true))
+	option = user_input(display.print_color("voyager>", "lavender", true))
+	if is_not_number(option) then return 0
+  if option.to_int() > 3 then return 0
+	return option.to_int()
+end function
+
+blue_menu = function(display)
+  option_number = 1
+  for option in BLUE_MENU
+    print(display.print_color(str(option_number) + ". " + BLUE_MENU[option_number - 1], "blue", true))
+    option_number = option_number + 1
+  end for
+  option = user_input(display.print_color("blue>", "blue", true))
+  if is_not_number(option) then return 0
+  if option.to_int() > len(BLUE_MENU) then return 0
+  return option.to_int()
+end function

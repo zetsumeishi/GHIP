@@ -1,0 +1,107 @@
+// hades
+
+main_menu = function()
+	for i in range(0, HADES_MAIN_MENU.len - 1)
+		print("[" + i + "] " + HADES_MAIN_MENU[i])
+	end for
+	print("[99] Exit")
+	opt = user_input(">").val
+	return opt
+end function
+
+proxies_menu = function(ignore)
+	for i in range(0, USER.proxies.len - 1)
+		print("[" + i + "] " + USER.proxies[i].ip)
+	end for
+	if not ignore then
+		print("[" + USER.proxies.len + "] " + "ALL")
+	end if
+	opt = user_input(">").val
+	return opt
+end function
+
+parse_map = function()
+	map_file = USER.computer.File("/home/" + USER.name + "/Config/Map.conf")
+	map_content = map_file.content.replace("""", "").replace("{", "").replace("}", "").replace("[", "").replace("]", "").remove("accounts:").split(",")[:-1]
+	for i in range(0, map_content.len - 1, 3)
+		proxy = new Proxy
+		proxy_info = slice(map_content, i, i + 3)
+		proxy.user = proxy_info[0].split(":")[1]
+		proxy.ip = proxy_info[1].split(":")[1]
+		proxy.password = proxy_info[2].split(":")[1]
+		USER.proxies.push(proxy)
+	end for
+end function
+
+download = function(targets)
+	src_path = user_input("source (remote)>")
+	dest_path = user_input("destination (host)>")
+	print("Download: <color=green><b>" + src_path + "</b></color> to <color=green><b>" + dest_path + "</b></color>")
+	for target in targets
+		target_shell = get_shell.connect_service(target.ip, 22, target.user, target.password)
+		target_shell.scp_upload(src_path, dest_path, USER.shell)
+		print("<color=green>File downloaded from " + target.ip + "</color>")
+	end for
+end function
+
+upload = function(targets)
+	src_path = user_input("source (host)>")
+	dest_path = user_input("destination (remote)>")
+	print("Upload: <color=green><b>" + src_path + "</b></color> to <color=green><b>" + dest_path + "</b></color>")
+	for target in targets
+		target_shell = get_shell.connect_service(target.ip, 22, target.user, target.password)
+		USER.shell.scp_upload(src_path, dest_path, target_shell)
+		print("<color=green>File uploaded to " + target.ip + "</color>")
+	end for
+end function
+
+root_permissions = function(targets)
+	for target in targets
+		target_shell = get_shell.connect_service(target.ip, 22, target.user, target.password)
+		parent = target_shell.host_computer.File("/")
+		parent.chmod("o-wrx", 1)
+		parent.chmod("g-wrx", 1)
+		parent.chmod("u-wrx", 1)
+		print("<color=green>Permissions changed on " + target.ip + "</color>")
+	end for
+end function
+
+clear_logs = function(targets)
+	for target in targets
+		target_shell = get_shell.connect_service(target.ip, 22, target.user, target.password)
+		target_computer = target_shell.host_computer
+		log_file = target_computer.File("/var/system.log")
+		target_computer.create_user("g", "b")
+		log_file.move("/home/g", "system.log")
+		target_computer.delete_user("g", 1)
+	end for
+end function
+
+hades = function()
+	parse_map()
+	while true
+		action = main_menu()
+		if action == 99 then exit()
+		if action == 1 then
+			proxy_index = proxies_menu(true)
+		else
+			proxy_index = proxies_menu(false)
+		end if
+		if proxy_index == USER.proxies.len then
+			targets = USER.proxies
+		else
+			targets = [USER.proxies[proxy_index]]
+		end if
+
+		if action == 0 then
+			upload(targets)
+		else if action == 1 then
+			download(targets)
+		else if action == 2 then
+			root_permissions(targets)
+		else if action == 3 then
+			clear_logs(targets)
+		end if
+		clear_logs(targets)
+	end while
+end function

@@ -15,13 +15,30 @@ Port.vector = "" // Vector is the medium by which the exploit works (http, ssh, 
 Port.version = ""
 Port.state = "" // OPEN or CLOSED
 
-// Core Class
-// Methods:
-Core = {}
-
-// Pprint Class
-// Methods: color()
 
 // Display Class
-// Methods: banner()
+// Methods: banner(), print_color(string, color string, boolean bold)
 Display = {}
+
+// hades
+
+// Proxy Class
+Proxy = {}
+Proxy.user = ""
+Proxy.ip = ""
+Proxy.password = ""
+
+// User Class
+User = {}
+User.shell = "" // Shell object
+User.name = "" // Name of the user executing the script
+User.proxies = [] // List of proxies extracted from Map.conf
+User.computer = "" // Computer object
+
+USER = new User
+
+init_user = function()
+	USER.shell = get_shell
+	USER.name = active_user
+	USER.computer = USER.shell.host_computer
+end function
