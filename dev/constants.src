@@ -9,10 +9,15 @@ PROMPT = ["vo", "ya", "ge", "r", ">" + SPACE]
 OPEN = "OPEN"
 CLOSED = "CLOSED"
 
-// User informations
-SHELL = get_shell
-COMPUTER = SHELL.host_computer
-CRYPTO = include_lib("/lib/crypto.so")
+COLOR = {}
+COLOR["red"] = "#f94144"
+COLOR["yellow"] = "#f9c74f"
+COLOR["orange"] = "#f8961e"
+COLOR["blue"] = "#118ab2"
+COLOR["green"] = "#90be6d"
+COLOR["black"] = "#000000"
+COLOR["white"] = "#ffffff"
+COLOR["lavender"] = "#a87fff"
 
 // Gradient used in the suite
 GRADIENT = {}
@@ -23,3 +28,7 @@ GRADIENT["little_boy"] = "#67a6ff"
 GRADIENT["cornflower"] = "#8a92ff"
 GRADIENT["lavender"] = "#b079ff"
 GRADIENT["heliothrope"] = "#d456f2"
+
+// User information
+SHELL = get_shell
+COMPUTER = SHELL.host_computer
