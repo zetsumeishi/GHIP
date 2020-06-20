@@ -2,9 +2,15 @@
 // The downside of this script is that it forces you to adopt a linear approach to your code
 // Meaning, this is the structure of the code you need
 // - project/
-// 		- project.src
 //		- module1.src
 //		- module2.src
+// 		- project.src
+//
+// Command you would use with that structure: "make project"
+// It respects the order of #import statements. So you need to think about what
+// are the module dependencies. I tend then to have a separate file for constants,
+// classes, display, core, aand then the main file that calls everything where the
+// #import statements are located.
 // zetsumeishi
 
 debug = false
