@@ -1,0 +1,72 @@
+// - Bank Buster -
+// All your bank accounts are belong to us!
+
+
+//Define requirements
+
+metaxploit = include_lib("/lib/metaxploit.so")
+if not metaxploit then
+    currentPath = get_shell.host_computer.current_path
+    metaxploit = include_lib(currentPath + "/metaxploit.so")
+end if
+if not metaxploit then exit("Error: Can't find metaxploit library in the /lib path or the current folder")
+
+
+
+// Grab random IP -> scan for exploits -> comprimise bank account -> if decryptsetting == true then decrypt else save encrypted account to file -> ??? -> profit
+
+
+splash_text = ["All your bank accounts are belong to us!", "For all your bank busting needs!", "The all in one bank buster.", "Step 1. Run Bankbuster\nStep 2. ???\nStep 3. Profit!"]
+
+vulns = [{"lib":"ssh", "version":"1.0.0", "string":"sirectsetvaluesrepeattinemoverlaytrue", "address":"0x12E227E2"}, {"lib":"smtp", "version":"1.7.4", "string":"ringpe", "address":"0x32648301"}]
+
+random_ip = function()
+    generated_ip = ""
+    for i in range(0,3)
+        generated_ip = generated_ip + str(floor(rnd() * 255) + 1)
+        if i != 3 then
+            generated_ip = generated_ip + "."
+        end if
+    end for
+    return generated_ip
+end function
+
+
+//Scanning phase
+router = null
+
+while router == null
+    router = get_router(random_ip())
+end while
+
+router_ports = router.used_ports
+
+for port in router_ports
+    protocol = router.port_info(port).split(" ")
+    lib = protocol[0]
+    ver = protocol[1]
+    for vuln in vulns
+        if vuln["lib"] == lib and vuln["version"] == ver then
+            print("[+] Vulnerablility found.")
+            net_session = metaxploit.net_use(router.public_ip, port.port_number)
+            meta_lib = net_session.dump_lib
+            result = meta_lib.overflow(vuln["address"], vuln["string"])
+            if result and typeof(result) == "computer" then
+                home_folder = result.File("/home")
+                if home_folder then
+                    user_folders = home_folder.get_folders
+                    found = false
+                    for user_folder in user_folders
+                        bank_file = result.File("/home/" + user_folder.name + "/Config/Bank.txt")
+                        if not bank_file then continue
+                        if not bank_file.has_permission("r") then continue
+                        print(bank_file.content)
+                    end for
+                end if
+            end if
+        end if
+    end for
+
+    print("[+] Port found, info: " + router.port_info(port))
+end for
+
