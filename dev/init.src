@@ -42,3 +42,9 @@ init_user = function()
 	USER.name = active_user
 	USER.computer = USER.shell.host_computer
 end function
+
+
+METAXPLOIT = include_lib("/lib/metaxploit.so")
+if not METAXPLOIT then exit("Error: Can't find metaxploit library in the /lib path.")
+CRYPTO = include_lib("/lib/crypto.so")
+if not CRYPTO then exit("Error: Can't find crypto library in the /lib path.")

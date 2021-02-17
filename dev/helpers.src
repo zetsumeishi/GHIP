@@ -2,3 +2,14 @@ is_not_number = function(str)
   if typeof(str.to_int()) != "number" then return true
   return false
 end function
+
+random_ip = function()
+    generated_ip = ""
+    for i in range(0,3)
+        generated_ip = generated_ip + str(floor(rnd() * 255) + 1)
+        if i != 3 then
+            generated_ip = generated_ip + "."
+        end if
+    end for
+    return generated_ip
+end function
