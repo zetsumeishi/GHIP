@@ -5,7 +5,7 @@ end function
 
 random_ip = function()
     generated_ip = ""
-    for i in range(0,3)
+    for i in range(0, 3)
         generated_ip = generated_ip + str(floor(rnd() * 255) + 1)
         if i != 3 then
             generated_ip = generated_ip + "."
