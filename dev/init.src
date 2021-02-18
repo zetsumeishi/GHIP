@@ -43,9 +43,14 @@ end function
 
 
 METAXPLOIT = include_lib("/lib/metaxploit.so")
-if not METAXPLOIT then exit("Error: Can't find metaxploit library in the /lib path.")
+if not METAXPLOIT then
+	exit("Error: Can't find metaxploit library in the /lib path.")
+end if
+
 CRYPTO = include_lib("/lib/crypto.so")
-if not CRYPTO then exit("Error: Can't find crypto library in the /lib path.")
+if not CRYPTO then
+	exit("Error: Can't find crypto library in the /lib path.")
+end if
 
 // Constants
 // Global variables that can be used across all tools
