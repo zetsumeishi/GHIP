@@ -1,7 +1,7 @@
 Display.banner = function()
 	i = 0
 	keys = GRADIENT.indexes()
-	banner_content = USER.computer.File("/home/" + USER.name + "/voyager/banner.txt").content.split(EOL)
+	banner_content = USER.computer.File("/home/" + USER.name + "/voyager/banner.txt").get_content().split(EOL)
 	for line in banner_content[:7]
 		print("<color=" + GRADIENT[keys[i]] + "><b>" + line + "</b></color>")
 		i = i + 1

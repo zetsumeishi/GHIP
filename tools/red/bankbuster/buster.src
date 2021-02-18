@@ -60,7 +60,7 @@ for port in router_ports
                         bank_file = result.File("/home/" + user_folder.name + "/Config/Bank.txt")
                         if not bank_file then continue
                         if not bank_file.has_permission("r") then continue
-                        print(bank_file.content)
+                        print(bank_file.get_content())
                     end for
                 end if
             end if

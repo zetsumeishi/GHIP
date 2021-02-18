@@ -61,8 +61,8 @@ analyze_port = function(port, conn, port_info)
 end function
 
 main = function()
-	db_content = DB_FILE.content
-	last_ip = LAST_IP_FILE.content.split(".")
+	db_content = DB_FILE.get_content()
+	last_ip = LAST_IP_FILE.get_content().split(".")
 
 	for octet1 in range(last_ip[0].val, 255)
 		for octet2 in range(last_ip[1].val, 255)

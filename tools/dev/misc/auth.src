@@ -29,11 +29,11 @@ login = function()
 	whitelist_computer = whitelist_server.host_computer			
 	database = whitelist_computer.File("/home/database/whitelisted/whitelistedips")
 	if database then
-		if database.content.indexOf(get_router.public_ip) != null then
+		if database.get_content().indexOf(get_router.public_ip) != null then
 			return 1 //Authenticated
 		else
-			//if database.File("/home/database/denied/ips").content.indexOf(get_router.public_ip) then
-			//	database.File("/home/database/denied/ips").content = database.File("/home/database/denied/ips").content + "\n" + get_router.public_ip
+			//if database.File("/home/database/denied/ips").get_content().indexOf(get_router.public_ip) then
+			//	database.File("/home/database/denied/ips").get_content() = database.File("/home/database/denied/ips").get_content() + "\n" + get_router.public_ip
 			//end if
 			return 0 //Failed to authenticate
 		end if

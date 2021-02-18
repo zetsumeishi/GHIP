@@ -37,7 +37,7 @@ end function
 
 parse_map = function()
 	map_file = User.computer.File("/home/" + User.name + "/Config/Map.conf")
-	map_content = map_file.content.replace("""", "").replace("{", "").replace("}", "").replace("[", "").replace("]", "").remove("accounts:").split(",")[:-1]
+	map_content = map_file.get_content().replace("""", "").replace("{", "").replace("}", "").replace("[", "").replace("]", "").remove("accounts:").split(",")[:-1]
 	for i in range(0, map_content.len - 1, 3)
 		proxy = new Proxy
 		proxy_info = slice(map_content, i, i + 3)
