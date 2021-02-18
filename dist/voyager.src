@@ -89,7 +89,7 @@ Display.banner = function()
 	for line in banner_content[:7]
 		print("<color=" + GRADIENT[keys[i]] + "><b>" + line + "</b></color>")
 		i = i + 1
-		// wait(0.1) Uncomment this when nightly goes public. Not working on this current version.
+		wait(0.1)
 	end for
 end function
 
