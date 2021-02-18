@@ -14,19 +14,19 @@ It might look too much organization for that but as the team will grow, and more
 
 ## Blue Tools
 
-#### zBounce
+#### hades
 
-Server management tool. Run commands on your proxy servers.
+Proxy management tool. Run commands on your proxy servers.
 
 ## Red Tools
 
 #### athena
 
-Scans the whole internet for all existing exploits to compile them into a readable database.
+Scans the whole internet for all existing exploits to compile into a readable database.
 
 #### hermes
 
-Currently in nightly. Automatically hacks all WiFi and compile a report.
+Automatically hacks all WiFi and compile a report.
 
 #### exploitZ
 
@@ -34,14 +34,21 @@ Automatic exploit of a target.
 
 ## Dev Tools
 
-#### zCompile
+#### make
 
-Compiles files into one before compiling. Helps organize the code and reuse it in other projects.
+Compiles files into one before building the executable. Helps organizing the code.
 
-**Usage:** ```zCompile dir_path main.src```
+**Usage:**
+```shell
+make <project>
+```
 
-- `dir_path` is the folder where all the source files are located.
-- `main.src` is the main file where the `#import` tags are located.
+`project` is the name of the project you want to compile. In our case, we would run the following command in `dev/`:
+
+```shell
+make voyager
+```
+
 
 #### zLib
 
