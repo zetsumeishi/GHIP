@@ -48,3 +48,39 @@ METAXPLOIT = include_lib("/lib/metaxploit.so")
 if not METAXPLOIT then exit("Error: Can't find metaxploit library in the /lib path.")
 CRYPTO = include_lib("/lib/crypto.so")
 if not CRYPTO then exit("Error: Can't find crypto library in the /lib path.")
+
+// Constants
+// Global variables that can be used across all tools
+// -------------------------------------------------------------------------------------
+// If you want to put a carriage return in a print or string for example, use EOL
+// because when writing the file that is beingcompiled, it's going to put a carriage
+// return in the middle of the code.
+
+EOL = char(10)
+SPACE = char(32)
+PROMPT = ["vo", "ya", "ge", "r", ">" + SPACE]
+OPEN = "OPEN"
+CLOSED = "CLOSED"
+
+COLOR = {}
+COLOR["red"] = "#f94144"
+COLOR["yellow"] = "#f9c74f"
+COLOR["orange"] = "#f8961e"
+COLOR["blue"] = "#118ab2"
+COLOR["green"] = "#90be6d"
+COLOR["black"] = "#000000"
+COLOR["white"] = "#ffffff"
+COLOR["lavender"] = "#a87fff"
+
+// Gradient used in the suite
+GRADIENT = {}
+GRADIENT["baby_blue"] = "#6ecdfa"
+GRADIENT["capri"] = "#56c3ff"
+GRADIENT["blue_jeans"] = "#51b6ff"
+GRADIENT["little_boy"] = "#67a6ff"
+GRADIENT["cornflower"] = "#8a92ff"
+GRADIENT["lavender"] = "#b079ff"
+GRADIENT["heliothrope"] = "#d456f2"
+
+BLUE_MENU = ["hades"]
+HADES_MAIN_MENU = ["Upload file", "Download file", "Root permissions", "Clear logs"]
