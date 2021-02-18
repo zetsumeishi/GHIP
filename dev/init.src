@@ -1,6 +1,6 @@
 // Init
-// This is the file where we declare ours classes for reference.
-// Also helps having a documented file about the objects we used across the suite.
+// Prototype of the classes used in the suite
+// -------------------------------------------------------------------------------------
 
 // Target Class
 // Variables: ports (list of Port), ip, url, router, whois
@@ -19,8 +19,6 @@ Port.state = "" // OPEN or CLOSED
 // Display Class
 // Methods: banner(), print_color(string, color string, boolean bold)
 Display = {}
-
-// hades
 
 // Proxy Class
 Proxy = {}
