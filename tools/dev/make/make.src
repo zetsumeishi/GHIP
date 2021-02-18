@@ -50,7 +50,7 @@ tmp_file = computer.File(project_path + tmp_filename)
 
 // Listing all the modules to import from the project file
 modules = []
-file_to_content = file_to.content.split(eol)
+file_to_content = file_to.get_content().split(eol)
 nb_imports = 0
 for line in file_to_content
 	if line and line[0] == "#" then
@@ -69,7 +69,7 @@ end for
 tmp_content = []
 for module in modules
 	file_from = computer.File(project_path + module)
-	tmp_content.push(file_from.content.trim)
+	tmp_content.push(file_from.get_content().trim)
 end for
 
 tmp_content.push(file_to_content.join("\n"))  // Adding project file content
