@@ -1,1 +1,0 @@
-BANK_VULNERABILITIES = [{"lib":"ssh", "version":"1.0.0", "string":"sirectsetvaluesrepeattinemoverlaytrue", "address":"0x12E227E2"}, {"lib":"smtp", "version":"1.7.4", "string":"ringpe", "address":"0x32648301"}]
